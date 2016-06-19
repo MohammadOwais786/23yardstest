@@ -152,7 +152,7 @@ jQuery(function($) {
 			bottomMargin = parseInt($dialog.css('marginBottom'), 10);
 
 		// Make sure you don't hide the top part of the modal w/ a negative margin
-		// if it's longer than the screen height, and keep the margin equal to 
+		// if it's longer than the screen height, and keep the margin equal to
 		// the bottom margin of the modal
 		if (offset < bottomMargin) offset = bottomMargin;
 		$dialog.css("margin-top", offset);
@@ -167,5 +167,33 @@ jQuery(function($) {
 
 	$(window).on("resize", function() {
 		$('.modal:visible').each(centerModal);
+	});
+	$(function () {
+
+	    $('#contact-form').validator();
+
+	    $('#contact-form').on('submit', function (e) {
+	        if (!e.isDefaultPrevented()) {
+	            var url = "../php/contact.php";
+
+	            $.ajax({
+	                type: "POST",
+	                url: url,
+	                data: $(this).serialize(),
+	                success: function (data)
+	                {
+	                    var messageAlert = 'alert-' + data.type;
+	                    var messageText = data.message;
+
+	                    var alertBox = '<div class="alert ' + messageAlert + ' alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + messageText + '</div>';
+	                    if (messageAlert && messageText) {
+	                        $('#contact-form').find('.messages').html(alertBox);
+	                        $('#contact-form')[0].reset();
+	                    }
+	                }
+	            });
+	            return false;
+	        }
+	    })
 	});
 });
